@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "AluMindDatabase"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+
+  initdb:
+    image: postgres:12
+    depends_on:
+      - db
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql

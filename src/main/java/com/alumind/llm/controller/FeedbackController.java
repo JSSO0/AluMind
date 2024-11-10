@@ -1,8 +1,12 @@
 package com.alumind.llm.controller;
 
+import com.alumind.llm.model.FeedbackModel;
+import com.alumind.llm.service.FeedbackService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/feedback")
 public class FeedbackController {
 
-        public ResponseEntity<String> processFeedback(@RequestBody String feedback) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(FeedbackModel);
+    @Autowired
+    private FeedbackService feedbackService;
+
+    @PostMapping
+    public ResponseEntity<FeedbackModel> processFeedback(@RequestBody String feedback) {
+        FeedbackModel feedbackModel = feedbackService.analyzeFeedback(feedback);
+        return ResponseEntity.status(HttpStatus.CREATED).body(feedbackModel);
     }
 }

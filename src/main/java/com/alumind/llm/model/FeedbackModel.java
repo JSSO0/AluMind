@@ -1,5 +1,8 @@
 package com.alumind.llm.model;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class FeedbackModel {
     private Integer id;
     private String sentiment;

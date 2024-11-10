@@ -24,7 +24,7 @@ public class FeedbackDAO {
 
     private static final String INSERT_FEEDBACK_SQL = "INSERT INTO feedback (sentiment, code, reason, feedbackOriginal) VALUES (?, ?, ?, ?)";
 
-    public FeedbackModel insertFeedback() {
+    public FeedbackModel insertFeedback( FeedbackModel feedbackModel) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(INSERT_FEEDBACK_SQL, new String[]{"id"});

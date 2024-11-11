@@ -35,4 +35,7 @@ public class FeedbackProcessingService {
             throw new FeedbackOperationException.FeedbackProcessingException("Erro ao processar o feedback: falha no banco de dados", ex);
         }
     }
+    public SuggestedAnswerResponse getSuggestedAnswer(Integer id) {
+        return feedbackRepository.getSuggestedAnswerById(id);
+    }
 }

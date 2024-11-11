@@ -3,6 +3,7 @@ package com.alumind.llm.controller;
 import com.alumind.llm.exception.FeedbackOperationException;
 import com.alumind.llm.model.FeedbackResult;
 import com.alumind.llm.model.SimpleErrorResponse;
+import com.alumind.llm.model.SuggestedAnswerResponse;
 import com.alumind.llm.service.FeedbackProcessingService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,10 @@ public class FeedbackController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+    @GetMapping("/suggested-answer/{id}")
+    public ResponseEntity<SuggestedAnswerResponse> getSuggestedAnswer(@PathVariable Integer id) {
+        SuggestedAnswerResponse suggestedAnswer = feedbackProcessingService.getSuggestedAnswer(id);
+        return ResponseEntity.ok(suggestedAnswer);
     }
 }

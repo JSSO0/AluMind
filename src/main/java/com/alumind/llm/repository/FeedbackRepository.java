@@ -38,4 +38,15 @@ public class FeedbackRepository {
 
         return feedbackMapper.mapToFeedbackResponse(keyHolder, feedbackRequest);
     }
+
+    private static final String SELECT_SUGGESTED_ANSWER_SQL = "SELECT suggestedAnswer FROM feedback WHERE id = ?";
+
+    public SuggestedAnswerResponse getSuggestedAnswerById(Integer id) {
+        try {
+            String suggestedAnswer = jdbcTemplate.queryForObject(SELECT_SUGGESTED_ANSWER_SQL, new Object[]{id}, String.class);
+            return new SuggestedAnswerResponse(suggestedAnswer);
+        } catch (DataAccessException ex) {
+            throw new FeedbackOperationException.DatabaseOperationException("Erro ao recuperar a suggested answer do banco de dados", ex);
+        }
+    }
 }

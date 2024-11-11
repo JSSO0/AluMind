@@ -6,11 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
+import org.springframework.stereotype.Service;;
 
 @Service
 public class FeedbackAnalyze {
@@ -18,30 +14,37 @@ public class FeedbackAnalyze {
     private OpenAiRequest openAiRequest;
 
     public FeedbackModel analyze(String feedback) throws JsonProcessingException {
-        String prompt = "Classifique o sentimento do seguinte feedback como 'POSITIVO', 'NEGATIVO' ou 'INDIFERENTE' e Identifique a solicitação de funcionalidade no feedback a seguir e classifique o código (como 'EDITAR_PERFIL', 'ALTERAR_SENHA' ou outros) e a razão da solicitação.Feedback: \"" + feedback + "\".";
+        String prompt = "Classifique o sentimento do seguinte feedback como 'POSITIVO', 'NEGATIVO' ou 'INDIFERENTE' e Identifique a solicitação de funcionalidade no feedback a seguir e classifique o código (como 'EDITAR_PERFIL', 'ALTERAR_SENHA' ou outros) e a razão da solicitação. e Me devolva na estrutura SENTIMENTO: CODE: REASON: lembrando da quebra de linha ; o Feedback: \"" + feedback + "\".";
         String responseBody = openAiRequest.sendRequest(prompt, feedback);
+
         FeedbackModel feedbackModel = new FeedbackModel();
         RequestFeaturesModel requestFeaturesModel = new RequestFeaturesModel();
+        ObjectMapper mapper = new ObjectMapper();
+
+        JsonNode jsonNode = mapper.readTree(feedback);
+        String feedbackContent = jsonNode.get("feedback").asText();
         feedbackModel.setRequestFeaturesModel(requestFeaturesModel);
+        feedbackModel.setFeedbackOriginal(feedbackContent);
 
         if (responseBody != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode = mapper.readTree(responseBody);
-            String content = jsonNode.get("choices").get(0).get("message").get("content").asText();
+
+            JsonNode jsonNodee = mapper.readTree(responseBody);
+            String content = jsonNodee.get("choices").get(0).get("message").get("content").asText();
             String[] lines = content.split("\n");
-            Map<String, Consumer<String>> map = new HashMap<>();
-            map.put("Sentimento", feedbackModel::setSentiment);
-            map.put("Classificação do código", requestFeaturesModel::setCode);
-            map.put("Código", requestFeaturesModel::setCode);
-            map.put("Razão da solicitação", requestFeaturesModel::setReason);
 
             for (String line : lines) {
                 String key = line.split(":")[0].trim();
                 String value = line.substring(line.indexOf(":") + 1).trim();
-
-                Consumer<String> consumer = map.get(key);
-                if (consumer != null) {
-                    consumer.accept(value);
+                switch (key) {
+                    case "SENTIMENTO":
+                        feedbackModel.setSentiment(value);
+                        break;
+                    case "CODE":
+                        requestFeaturesModel.setCode(value);
+                        break;
+                    case "REASON":
+                        requestFeaturesModel.setReason(value);
+                        break;
                 }
             }
         } else {

@@ -12,11 +12,7 @@ public class SpamValidation {
     @Autowired
     private OpenAiRequest openAiRequest;
 
-    @Autowired
-    private FeedbackModel feedbackModel;
-
     public boolean analyze(String feedback) throws JsonProcessingException {
-        feedbackModel.setFeedbackOriginal(feedback);
         String prompt = "Me retorne se é SPAM ou NÃO SPAM. Texto: \"" + feedback + "\".";
         String responseBody = openAiRequest.sendRequest(prompt, feedback);
         ObjectMapper mapper = new ObjectMapper();

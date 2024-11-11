@@ -1,8 +1,7 @@
 package com.alumind.llm.service;
 
-import com.alumind.llm.model.FeedbackModel;
-import com.alumind.llm.nlp.FeedbackAnalyze;
-import com.alumind.llm.nlp.SpamValidation;
+import com.alumind.llm.model.*;
+import com.alumind.llm.nlp.*;
 import com.alumind.llm.repository.FeedbackDAO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +18,14 @@ public class FeedbackService {
     @Autowired
     private FeedbackDAO feedbackDAO;
 
-    public FeedbackModel analyzeFeedback(String feedback) throws JsonProcessingException {
+    public FeedbackResponse analyzeFeedback(String feedback) throws JsonProcessingException {
         boolean isSpam = spamValidation.analyze(feedback);
         if (isSpam) {
             System.out.print("É false");
         } else {
             FeedbackModel feedbackModel = feedbackAnalyze.analyze(feedback);
-            feedbackDAO.insertFeedback(feedbackModel);
+            return feedbackDAO.insertFeedback(feedbackModel);
         }
-        return feedbackModel;
-    };
+        return null;
+    }
 }

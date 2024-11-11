@@ -7,7 +7,7 @@ public class FeedbackModel {
     private Integer id;
     private String sentiment;
     private RequestFeaturesModel requestFeaturesModel;
-    private String FeedbackOriginal;
+    private String feedbackOriginal;
 
     public Integer getId() {
         return id;
@@ -34,11 +34,11 @@ public class FeedbackModel {
     }
 
     public String getFeedbackOriginal() {
-        return FeedbackOriginal;
+        return feedbackOriginal;
     }
 
     public void setFeedbackOriginal(String feedbackOriginal) {
-        FeedbackOriginal = feedbackOriginal;
+        this.feedbackOriginal = feedbackOriginal;
     }
 
 }

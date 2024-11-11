@@ -1,15 +1,14 @@
 version: '3.8'
 
 services:
+
   db:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: postgres:latest
     container_name: alumind-db
     environment:
+      POSTGRES_DB: alumind
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: alumind
     ports:
       - "5432:5432"
     volumes:

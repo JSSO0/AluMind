@@ -1,5 +1,6 @@
 package com.alumind.llm.controller;
 
+import com.alumind.llm.exception.FeedbackOperationException;
 import com.alumind.llm.model.FeedbackResult;
 import com.alumind.llm.model.SimpleErrorResponse;
 import com.alumind.llm.service.FeedbackProcessingService;
@@ -20,13 +21,20 @@ public class FeedbackController {
 
     @PostMapping
     @ResponseBody
-    public ResponseEntity<?> handleFeedbackSubmission(@RequestBody String feedback) throws JsonProcessingException {
-        FeedbackResult result = feedbackProcessingService.processFeedback(feedback);
+    public ResponseEntity<?> handleFeedbackSubmission(@RequestBody String feedback) {
+        try {
+            FeedbackResult result = feedbackProcessingService.processFeedback(feedback);
 
-        if (result.isSpam()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleErrorResponse(result.getErrorMessage()));
-        } else {
-            return ResponseEntity.status(HttpStatus.CREATED).body(result.getFeedbackResponse());
+            if (result.isSpam()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleErrorResponse(result.getErrorMessage()));
+            } else {
+                return ResponseEntity.status(HttpStatus.CREATED).body(result.getFeedbackResponse());
+            }
+        } catch (FeedbackOperationException.FeedbackProcessingException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new SimpleErrorResponse("Erro ao processar o feedback: " + ex.getMessage()));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 }

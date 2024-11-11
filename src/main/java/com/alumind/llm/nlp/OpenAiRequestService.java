@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class OpenAiRequest {
+public class OpenAiRequestService {
     @Value("${openai.api.url}")
     private String apiUrl;
 

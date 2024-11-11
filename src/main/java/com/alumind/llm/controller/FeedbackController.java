@@ -1,7 +1,8 @@
 package com.alumind.llm.controller;
 
-import com.alumind.llm.model.FeedbackResponse;
-import com.alumind.llm.service.FeedbackService;
+import com.alumind.llm.model.FeedbackResult;
+import com.alumind.llm.model.SimpleErrorResponse;
+import com.alumind.llm.service.FeedbackProcessingService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,12 +16,17 @@ import org.springframework.web.bind.annotation.*;
 public class FeedbackController {
 
     @Autowired
-    private FeedbackService feedbackService;
+    private FeedbackProcessingService feedbackProcessingService;
 
     @PostMapping
     @ResponseBody
-    public ResponseEntity<FeedbackResponse> processFeedback(@RequestBody String feedback) throws JsonProcessingException {
-        FeedbackResponse feedbackResponse = feedbackService.analyzeFeedback(feedback);
-        return ResponseEntity.status(HttpStatus.CREATED).body(feedbackResponse);
+    public ResponseEntity<?> handleFeedbackSubmission(@RequestBody String feedback) throws JsonProcessingException {
+        FeedbackResult result = feedbackProcessingService.processFeedback(feedback);
+
+        if (result.isSpam()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new SimpleErrorResponse(result.getErrorMessage()));
+        } else {
+            return ResponseEntity.status(HttpStatus.CREATED).body(result.getFeedbackResponse());
+        }
     }
 }

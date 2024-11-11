@@ -3,7 +3,7 @@ package com.alumind.llm.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RequestFeaturesModel {
+public class FeedbackDetails {
     private String code;
     private String reason;
 

@@ -3,11 +3,12 @@ package com.alumind.llm.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FeedbackModel {
+public class FeedbackRequest {
     private Integer id;
     private String sentiment;
-    private RequestFeaturesModel requestFeaturesModel;
+    private FeedbackDetails feedbackDetails;
     private String feedbackOriginal;
+    private String suggestedAnswer;
 
     public Integer getId() {
         return id;
@@ -17,12 +18,12 @@ public class FeedbackModel {
         this.id = id;
     }
 
-    public RequestFeaturesModel getRequestFeaturesModel() {
-        return requestFeaturesModel;
+    public FeedbackDetails getRequestFeaturesModel() {
+        return feedbackDetails;
     }
 
-    public void setRequestFeaturesModel(RequestFeaturesModel requestFeaturesModel) {
-        this.requestFeaturesModel = requestFeaturesModel;
+    public void setRequestFeaturesModel(FeedbackDetails feedbackDetails) {
+        this.feedbackDetails = feedbackDetails;
     }
 
     public String getSentiment() {
@@ -41,4 +42,11 @@ public class FeedbackModel {
         this.feedbackOriginal = feedbackOriginal;
     }
 
+    public String getSuggestedAnswer() {
+        return suggestedAnswer;
+    }
+
+    public void setSuggestedAnswer(String suggestedAnswer) {
+        this.suggestedAnswer = suggestedAnswer;
+    }
 }

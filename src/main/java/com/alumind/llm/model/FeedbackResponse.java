@@ -3,7 +3,8 @@ package com.alumind.llm.model;
 public class FeedbackResponse {
     private int id;
     private String sentiment;
-    private RequestFeaturesModel requestFeaturesModel;
+    private FeedbackDetails feedbackDetails;
+    private String suggestedAnswer;
 
     public Integer getId() {
         return id;
@@ -21,11 +22,19 @@ public class FeedbackResponse {
         this.sentiment = sentiment;
     }
 
-    public RequestFeaturesModel getRequestFeaturesModel() {
-        return requestFeaturesModel;
+    public FeedbackDetails getRequestFeaturesModel() {
+        return feedbackDetails;
     }
 
-    public void setRequestFeaturesModel(RequestFeaturesModel requestFeaturesModel) {
-        this.requestFeaturesModel = requestFeaturesModel;
+    public void setRequestFeaturesModel(FeedbackDetails feedbackDetails) {
+        this.feedbackDetails = feedbackDetails;
+    }
+
+    public String getSuggestedAnswer() {
+        return suggestedAnswer;
+    }
+
+    public void setSuggestedAnswer(String suggestedAnswer) {
+        this.suggestedAnswer = suggestedAnswer;
     }
 }

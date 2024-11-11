@@ -1,7 +1,7 @@
 package com.alumind.llm.nlp;
 
-import com.alumind.llm.model.FeedbackModel;
-import com.alumind.llm.model.RequestFeaturesModel;
+import com.alumind.llm.model.FeedbackRequest;
+import com.alumind.llm.model.FeedbackDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,20 +11,20 @@ import org.springframework.stereotype.Service;;
 @Service
 public class FeedbackAnalyze {
     @Autowired
-    private OpenAiRequest openAiRequest;
+    private OpenAiRequestService openAiRequestService;
 
-    public FeedbackModel analyze(String feedback) throws JsonProcessingException {
-        String prompt = "Classifique o sentimento do seguinte feedback como 'POSITIVO', 'NEGATIVO' ou 'INDIFERENTE' e Identifique a solicitação de funcionalidade no feedback a seguir e classifique o código (como 'EDITAR_PERFIL', 'ALTERAR_SENHA' ou outros) e a razão da solicitação. e Me devolva na estrutura SENTIMENTO: CODE: REASON: lembrando da quebra de linha ; o Feedback: \"" + feedback + "\".";
-        String responseBody = openAiRequest.sendRequest(prompt, feedback);
+    public FeedbackRequest analyze(String feedback) throws JsonProcessingException {
+        String prompt = "Classifique o sentimento do seguinte feedback como 'POSITIVO', 'NEGATIVO' ou 'INDIFERENTE' e Identifique a solicitação de funcionalidade no feedback a seguir e classifique o código (como 'EDITAR_PERFIL', 'ALTERAR_SENHA' ou outros) e a razão da solicitação e uma sugestão de resposta para o feedback. e Me devolva na estrutura SENTIMENT: CODE: REASON: SUGGESTED_ANSWER: lembrando da quebra de linha ; o Feedback: \"" + feedback + "\".";
+        String responseBody = openAiRequestService.sendRequest(prompt, feedback);
 
-        FeedbackModel feedbackModel = new FeedbackModel();
-        RequestFeaturesModel requestFeaturesModel = new RequestFeaturesModel();
+        FeedbackRequest feedbackRequest = new FeedbackRequest();
+        FeedbackDetails feedbackDetails = new FeedbackDetails();
         ObjectMapper mapper = new ObjectMapper();
 
         JsonNode jsonNode = mapper.readTree(feedback);
         String feedbackContent = jsonNode.get("feedback").asText();
-        feedbackModel.setRequestFeaturesModel(requestFeaturesModel);
-        feedbackModel.setFeedbackOriginal(feedbackContent);
+        feedbackRequest.setRequestFeaturesModel(feedbackDetails);
+        feedbackRequest.setFeedbackOriginal(feedbackContent);
 
         if (responseBody != null) {
 
@@ -36,22 +36,25 @@ public class FeedbackAnalyze {
                 String key = line.split(":")[0].trim();
                 String value = line.substring(line.indexOf(":") + 1).trim();
                 switch (key) {
-                    case "SENTIMENTO":
-                        feedbackModel.setSentiment(value);
+                    case "SENTIMENT":
+                        feedbackRequest.setSentiment(value);
                         break;
                     case "CODE":
-                        requestFeaturesModel.setCode(value);
+                        feedbackDetails.setCode(value);
                         break;
                     case "REASON":
-                        requestFeaturesModel.setReason(value);
+                        feedbackDetails.setReason(value);
                         break;
+                    case "SUGGESTED_ANSWER":
+                        feedbackRequest.setSuggestedAnswer(value);
                 }
             }
         } else {
-            feedbackModel.setSentiment("Nenhum sentimento detectado");
-            requestFeaturesModel.setCode("Nenhum código detectado");
-            requestFeaturesModel.setReason("Nenhuma funcionalidade solicitada identificada.");
+            feedbackRequest.setSentiment("Nenhum sentimento detectado");
+            feedbackDetails.setCode("Nenhum código detectado");
+            feedbackDetails.setReason("Nenhuma funcionalidade solicitada identificada.");
+            feedbackRequest.setSuggestedAnswer("Nenhuma resposta sugerida identificada.");
         }
-        return feedbackModel;
+        return feedbackRequest;
     }
 }

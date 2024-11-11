@@ -9,24 +9,25 @@ import org.springframework.stereotype.Repository;
 import java.sql.*;
 
 @Repository
-public class FeedbackDAO {
+public class FeedbackRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private static final String INSERT_FEEDBACK_SQL = "INSERT INTO feedback (sentiment, code, reason, feedbackOriginal) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_FEEDBACK_SQL = "INSERT INTO feedback (sentiment, code, reason, feedbackOriginal, suggestedAnswer) VALUES (?, ?, ?, ?, ?)";
 
-    public FeedbackResponse insertFeedback(FeedbackModel feedbackModel) {
+    public FeedbackResponse saveFeedback(FeedbackRequest feedbackRequest) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         FeedbackMapper feedbackMapper = new FeedbackMapper();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(INSERT_FEEDBACK_SQL, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, feedbackModel.getSentiment());
-            ps.setString(2, feedbackModel.getRequestFeaturesModel().getCode());
-            ps.setString(3, feedbackModel.getRequestFeaturesModel().getReason());
-            ps.setString(4, feedbackModel.getFeedbackOriginal());
+            ps.setString(1, feedbackRequest.getSentiment());
+            ps.setString(2, feedbackRequest.getRequestFeaturesModel().getCode());
+            ps.setString(3, feedbackRequest.getRequestFeaturesModel().getReason());
+            ps.setString(4, feedbackRequest.getFeedbackOriginal());
+            ps.setString(5, feedbackRequest.getSuggestedAnswer());
             return ps;
         }, keyHolder);
-        return feedbackMapper.mapToFeedbackResponse(keyHolder, feedbackModel);
+        return feedbackMapper.mapToFeedbackResponse(keyHolder, feedbackRequest);
     }
 }

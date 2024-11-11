@@ -1,20 +1,19 @@
-version: '3'
+version: '3.8'
 
 services:
   db:
-    image: postgres:12
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: alumind-db
     environment:
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "AluMindPostgres"
-      POSTGRES_DB: "AluMindDatabase"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: alumind
     ports:
       - "5432:5432"
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
 
-  initdb:
-    image: postgres:12
-    depends_on:
-      - db
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+volumes:
+  db_data:

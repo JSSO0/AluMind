@@ -16,21 +16,20 @@ public class FeedbackDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private FeedbackModel feedbackModel;
-
-    @Autowired
-    private RequestFeaturesModel requestFeaturesModel;
-
     private static final String INSERT_FEEDBACK_SQL = "INSERT INTO feedback (sentiment, code, reason, feedbackOriginal) VALUES (?, ?, ?, ?)";
 
-    public FeedbackModel insertFeedback( FeedbackModel feedbackModel) {
+    public FeedbackModel insertFeedback(FeedbackModel feedbackModel) {
+        System.out.print(feedbackModel.getFeedbackOriginal());
+        System.out.print(feedbackModel.getSentiment());
+        System.out.print(feedbackModel.getRequestFeaturesModel().getCode());
+        System.out.print(feedbackModel.getRequestFeaturesModel().getReason());
+        System.out.print(feedbackModel.getFeedbackOriginal());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(INSERT_FEEDBACK_SQL, new String[]{"id"});
             ps.setString(1, feedbackModel.getSentiment());
-            ps.setString(2, requestFeaturesModel.getCode());
-            ps.setString(3, requestFeaturesModel.getReason());
+            ps.setString(2, feedbackModel.getRequestFeaturesModel().getCode());
+            ps.setString(3, feedbackModel.getRequestFeaturesModel().getReason());
             ps.setString(4, feedbackModel.getFeedbackOriginal());
             return ps;
         }, keyHolder);

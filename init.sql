@@ -5,4 +5,4 @@ CREATE TABLE feedback (
   reason text,
   feedbackOriginal text,
   suggestedAnswer text
-);
+)

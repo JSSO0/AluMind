@@ -4,7 +4,6 @@ public class FeedbackResponse {
     private int id;
     private String sentiment;
     private FeedbackDetails feedbackDetails;
-    private String suggestedAnswer;
 
     public Integer getId() {
         return id;
@@ -30,11 +29,4 @@ public class FeedbackResponse {
         this.feedbackDetails = feedbackDetails;
     }
 
-    public String getSuggestedAnswer() {
-        return suggestedAnswer;
-    }
-
-    public void setSuggestedAnswer(String suggestedAnswer) {
-        this.suggestedAnswer = suggestedAnswer;
-    }
 }

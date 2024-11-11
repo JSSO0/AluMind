@@ -17,7 +17,6 @@ public class FeedbackMapper {
         featureModel.setCode(feedbackRequest.getRequestFeaturesModel().getCode());
         featureModel.setReason(feedbackRequest.getRequestFeaturesModel().getReason());
         feedbackResponse.setRequestFeaturesModel(featureModel);
-        feedbackResponse.setSuggestedAnswer(feedbackRequest.getSuggestedAnswer());
         return feedbackResponse;
     }
 }
